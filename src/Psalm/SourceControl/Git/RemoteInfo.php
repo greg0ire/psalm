@@ -52,7 +52,7 @@ class RemoteInfo
      *
      * @return null|string
      */
-    public function getName() : ?string
+    public function getName()
     {
         return $this->name;
     }
@@ -76,7 +76,7 @@ class RemoteInfo
      *
      * @return null|string
      */
-    public function getUrl() : ?string
+    public function getUrl()
     {
         return $this->url;
     }

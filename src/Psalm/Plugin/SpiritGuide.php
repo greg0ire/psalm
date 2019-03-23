@@ -20,7 +20,7 @@ class SpiritGuide implements \Psalm\Plugin\Hook\AfterAnalysisInterface
         array $build_info,
         SourceControlInfo $source_control_info = null
     ) {
-        if ($source_control_info instanceof \Psalm\SourceControl\Git\GitInfo) {
+        if ($source_control_info instanceof \Psalm\SourceControl\Git\GitInfo && $build_info) {
             $data = [
                 'build' => $build_info,
                 'git' => $source_control_info->toArray(),
@@ -30,6 +30,8 @@ class SpiritGuide implements \Psalm\Plugin\Hook\AfterAnalysisInterface
                         return $i['severity'] === 'error';
                     }
                 ),
+                'coverage_map' => $codebase->analyzer->getTypeCoverageMap($codebase),
+                'coverage' => $codebase->analyzer->getTotalTypeCoverage($codebase)
             ];
 
             $payload = json_encode($data);
@@ -53,7 +55,7 @@ class SpiritGuide implements \Psalm\Plugin\Hook\AfterAnalysisInterface
             );
 
             // Submit the POST request
-            $result = curl_exec($ch);
+            curl_exec($ch);
 
             // Close cURL session handle
             curl_close($ch);
