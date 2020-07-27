@@ -626,7 +626,7 @@ class AssertionFinder
                     if (count($types) === 1 && isset($types['bool'])) {
                         if (IssueBuffer::accepts(
                             new RedundantIdentityWithTrue(
-                                'Comparing a boolean with true is redundant',
+                                'Identifying a boolean with true is redundant',
                                 new CodeLocation($source, $conditional)
                             ),
                             $source->getSuppressedIssues()
@@ -739,6 +739,7 @@ class AssertionFinder
                 && ($var_type = $source->node_data->getType($base_conditional))
             ) {
                 if ($conditional instanceof PhpParser\Node\Expr\BinaryOp\Identical) {
+                    $types = $var_type->getAtomicTypes();
                     $false_type = Type::getFalse();
 
                     if (!UnionTypeComparator::canExpressionTypesBeIdentical(
@@ -1246,6 +1247,18 @@ class AssertionFinder
                 && ($var_type = $source->node_data->getType($base_conditional))
             ) {
                 if ($conditional instanceof PhpParser\Node\Expr\BinaryOp\NotIdentical) {
+                    $types = $var_type->getAtomicTypes();
+                    if (count($types) === 1 && isset($types['bool'])) {
+                        if (IssueBuffer::accepts(
+                            new RedundantIdentityWithTrue(
+                                'Negating the identity of a boolean with true is redundant',
+                                new CodeLocation($source, $conditional)
+                            ),
+                            $source->getSuppressedIssues()
+                        )) {
+                            // fall through
+                        }
+                    }
                     $false_type = Type::getFalse();
 
                     if (!UnionTypeComparator::isContainedBy(

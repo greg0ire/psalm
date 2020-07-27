@@ -380,6 +380,17 @@ class BinaryOperationTest extends TestCase
                     }',
                     'error_message' => 'RedundantIdentityWithTrue',
             ],
+            'negatedRedundantIdentityWithTrue' => [
+                '<?php
+                    function returnsABool(): bool {
+                        return rand(1, 2) === 1;
+                    }
+
+                    if (returnsABool() !== false) {
+                        echo "hi!";
+                    }',
+                    'error_message' => 'RedundantIdentityWithTrue',
+            ],
         ];
     }
 }
